@@ -1,12 +1,2 @@
-
-rational_wave_test/Debug/vc142.idb
-rational_wave_test/rational_wave_test.vcxproj.filters
-rational_wave_test/.vs/rational_wave_test/v16/Browse.VC.db
-rational_wave_test/.vs/rational_wave_test/v16/ipch/AutoPCH/90031c95c35ec398/RATIONAL_WAVE_TEST.ipch
-rational_wave_test/Debug/rational.66F0C93F.tlog/CL.command.1.tlog
-rational_wave_test/Debug/rational.66F0C93F.tlog/CL.read.1.tlog
-rational_wave_test/Debug/rational.66F0C93F.tlog/rational_wave_test.lastbuildstate
-rational_wave_test/Debug/rational.66F0C93F.tlog/link.write.1.tlog
-rational_wave_test/Debug/rational.66F0C93F.tlog/link.read.1.tlog
-rational_wave_test/Debug/rational.66F0C93F.tlog/link.command.1.tlog
-rational_wave_test/Debug/rational.66F0C93F.tlog/CL.write.1.tlog
+.vs/*
+Debug/*
