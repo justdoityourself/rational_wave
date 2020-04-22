@@ -6,8 +6,32 @@
 
 using namespace rational_wave;
 
+TEST_CASE("RW Addition", "[rw::]")
+{
+	RationalWave<int16_t> r1(Repeat(5), 5,8,3,1);
+	RationalWave<int16_t> r2(Repeat(4),9,3,7,2,1);
+	RationalWave<int16_t> sum(Repeat(1), 14, 11, 10, 3, 6, 17, 6, 8, 7, 9, 12, 4, 12, 10, 4, 10, 8, 15, 5, 2);
 
-TEST_CASE("Basic", "[rw::]")
+	r2 += r1;
+
+	CHECK((r2 == sum));
+}
+
+TEST_CASE("Frequency Isolation", "[rw::]")
+{
+	RationalWave<int16_t> r1(Repeat(5), 5, 8, 3, 1);
+	RationalWave<int16_t> r2(Repeat(4), 9, 3, 7, 2, 1);
+	RationalWave<int16_t> sum(Repeat(1), 14, 11, 10, 3, 6, 17, 6, 8, 7, 9, 12, 4, 12, 10, 4, 10, 8, 15, 5, 2);
+
+	auto freq4 = sum.ApplyTransformation(DerivativeIdentity<int16_t>(5 % 4, 4));
+	auto _freq5 = sum.ApplyTransformation(DerivativeIdentity<int16_t>(4,5));
+	auto freq5 = _freq5.AntiDerivative(sum[0] / 2);
+
+	CHECK((freq4 == r1));
+	CHECK((freq5 == r2));
+}
+
+TEST_CASE("Legacy", "[rw::]")
 {
 
 	/*

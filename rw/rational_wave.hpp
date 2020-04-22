@@ -12,12 +12,26 @@ namespace rational_wave
         A Rational Wave wraps an sample buffer and provides methods to comprehend the data.
     */
 
+    class Repeat
+    {
+    public:
+        Repeat(size_t _r) : repetition(_r) {}
+
+        size_t operator() () const
+        {
+            return repetition;
+        }
+
+    private:
+        size_t repetition;
+    };
+
     template <typename T > class RationalWave
     {
     public:
         RationalWave(){}
 
-        template <typename ... F> RationalWave(T rep, F ... args)
+        template <typename ... F> RationalWave(Repeat rep, F ... args)
         {
             Generate(rep,args...);
         }
@@ -30,44 +44,53 @@ namespace rational_wave
             _Generate<O+1>(args...);
         }
 
-        template <typename ... F> void Generate(T rep, F ... args)
+        template <typename ... F> void Generate(Repeat rep, F ... args)
         {
             constexpr size_t unit =  sizeof...(args);
-            set_size(unit*rep);
+            set_size(unit*rep());
 
             _Generate<0>(args...);
 
             T gap = unit;
-            for(size_t i = 1; i < rep; i++)
+            for(size_t i = 1; i < rep(); i++)
                 std::copy(m.begin(),m.begin()+gap,m.data() + gap * i);
         }
 
-        template < typename F > void PairIterator(RationalWave & r, F f)
+        template < typename F > void PairIterator(const RationalWave & r, F f)
         {
             if(r.m.size() != m.size())
                 throw 1;
 
-            T * p1 = m.data();
-            T * p2 = r.m.data();
+            T * p1 = data();
+            const T * p2 = r.data_ro();
 
             size_t l = m.size();
             while(l--)
                 f(*p1++,*p2++);		
         }
 
-        void operator -=(RationalWave & r)
+        void operator -=(const RationalWave & r)
         {
-            PairIterator(r,[](T & l, T & r) { l -= r; });
+            PairIterator(r,[](T & l, const T & r) { l -= r; });
         }
 
-        void operator +=(RationalWave & r)
+        void operator +=(const RationalWave & r)
         {
-            PairIterator(r,[](T & l, T & r) { l += r; });	
+            PairIterator(r,[](T & l, const T & r) { l += r; });	
+        }
+
+        bool operator==(const RationalWave& r)
+        {
+            if (r.samples() != samples())
+                return false;
+
+            return std::equal(m.begin(), m.end(), r.m.begin());
         }
 
         T & operator[](size_t i){ return m[i]; }
 
-        size_t samples() { return m.size(); }
+        size_t samples() const { return m.size(); }
+        const T* data_ro() const { return m.data(); }
         T * data() { return m.data(); }
 
         void set_size(size_t c)
